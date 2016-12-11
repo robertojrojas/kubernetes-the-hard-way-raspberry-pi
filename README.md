@@ -1,4 +1,6 @@
-# Kubernetes The Hard Way Raspberry Pi
+![Image of Yaktocat](kubernetes_logo.png) ![Image of Yaktocat](raspberry_pi_logo.png)
+
+# Kubernetes the Hard Way Raspberry Pi
 
 This tutorial is inspired in the [Kelsey Hightower's Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way), but targeted to the Raspberry Pi. This guide is not for people looking for a fully automated command to bring up a Kubernetes cluster. If that's you then check out [Google Container Engine](https://cloud.google.com/container-engine), or the [Getting Started Guides](http://kubernetes.io/docs/getting-started-guides/).
 
