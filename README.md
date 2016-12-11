@@ -11,6 +11,12 @@ This tutorial is optimized for learning, which means taking the long route to he
 
 > The results of this tutorial should not be viewed as production ready, and may receive limited support from the community, but don't let that prevent you from learning!
 
+# DISCLAIMER
+The steps in this tutorial are "AS IS" without any warranties and support.
+I'm not responsible for any misconfiguration or damages of the Raspberry Pi equipment involved on this tutorial.
+
+
+
 ## Target Audience
 
 The target audience for this tutorial is someone who wants to get some hands on skills with the Kubernetes cluster and wants to understand how everything fits together. `If you're planning to support a production Kubernetes cluster, I highly recommend following Kelsey's tutorial instead`. After completing this tutorial I encourage you to automate away the manual steps presented in this guide.
