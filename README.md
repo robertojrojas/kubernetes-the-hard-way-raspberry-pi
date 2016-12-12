@@ -25,7 +25,7 @@ The target audience for this tutorial is someone who wants to get some hands on 
 
 ## Cluster Details
 
-* Kubernetes 1.4.3 (ARM)
+* Kubernetes 1.4.6 (ARM)
 * Docker 1.12.3 (ARM)
 * etcd 3.1.0-rc.1 (Built from source for ARM)
 * [CNI Based Networking](https://github.com/containernetworking/cni)
