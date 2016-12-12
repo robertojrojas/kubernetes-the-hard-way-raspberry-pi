@@ -194,7 +194,7 @@ KUBERNETES_HOSTS=(controller1 controller2 worker0 worker1)
 
 ```
 for host in ${KUBERNETES_HOSTS[*]}; do
-  ssh ${host} "mkdir -p ~/dev/servers/kubernetes"
+  ssh ${host} "mkdir -p ~/kubernetes"
   scp ca.pem kubernetes-key.pem kubernetes.pem ${host}:~/dev/servers/kubernetes
 done
 ```

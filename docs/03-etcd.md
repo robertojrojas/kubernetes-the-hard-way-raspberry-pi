@@ -1,6 +1,6 @@
 # Bootstrapping a H/A etcd cluster
 
-In this lab you will bootstrap a 3 node etcd cluster. The following virtual machines will be used:
+In this lab you will bootstrap a 3 node etcd cluster. The following machines will be used:
 
 * controller0
 * controller1
@@ -31,25 +31,28 @@ sudo mkdir -p /etc/etcd/
 ```
 
 ```
+cd $HOME/kubernetes
 sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
 ```
 
 ### Download and Install the etcd binaries
 
-Download the official etcd release binaries from `coreos/etcd` GitHub project:
+At the time of this writing etcd for ARM was not supported and no downloads were available, so I had to build it from source on a of the Raspberry Pi.
+To save you the time and trouble, I'm providing the version I built as part of the repository hosting this tutorial.
 
 ```
-wget https://github.com/coreos/etcd/releases/download/v3.0.10/etcd-v3.0.10-linux-amd64.tar.gz
+wget https://raw.githubusercontent.com/robertojrojas/kubernetes-the-hard-way-raspberry-pi/master/etcd/etcd-3.1.0-rc.1-arm.tar.gz
 ```
 
 Extract and install the `etcd` server binary and the `etcdctl` command line client: 
 
 ```
-tar -xvf etcd-v3.0.10-linux-amd64.tar.gz
+tar -xvf etcd-3.1.0-rc.1-arm.tar.gz
 ```
 
 ```
-sudo mv etcd-v3.0.10-linux-amd64/etcd* /usr/bin/
+sudo mv etcd-3.1.0-rc.1-arm/etcd* /usr/bin/
+rm -rf etcd-3.1.0-rc.1-arm*
 ```
 
 All etcd data is stored under the etcd data directory. In a production cluster the data directory should be backed by a persistent disk. Create the etcd data directory:
@@ -60,6 +63,8 @@ sudo mkdir -p /var/lib/etcd
 
 The etcd server will be started and managed by systemd. Create the etcd systemd unit file:
 
+Make sure the IP addresses in the **--initial-cluster** match your environment.
+
 ```
 cat > etcd.service <<"EOF"
 [Unit]
@@ -67,6 +72,8 @@ Description=etcd
 Documentation=https://github.com/coreos
 
 [Service]
+Environment=ETCD_UNSUPPORTED_ARCH=arm
+Type=notify
 ExecStart=/usr/bin/etcd --name ETCD_NAME \
   --cert-file=/etc/etcd/kubernetes.pem \
   --key-file=/etc/etcd/kubernetes-key.pem \
@@ -79,7 +86,7 @@ ExecStart=/usr/bin/etcd --name ETCD_NAME \
   --listen-client-urls https://INTERNAL_IP:2379,http://127.0.0.1:2379 \
   --advertise-client-urls https://INTERNAL_IP:2379 \
   --initial-cluster-token etcd-cluster-0 \
-  --initial-cluster controller0=https://10.240.0.10:2380,controller1=https://10.240.0.11:2380,controller2=https://10.240.0.12:2380 \
+  --initial-cluster controller0=https://10.0.1.94:2380,controller1=https://10.0.1.95:2380,controller2=https://10.0.1.96:2380 \
   --initial-cluster-state new \
   --data-dir=/var/lib/etcd
 Restart=on-failure
@@ -90,6 +97,10 @@ WantedBy=multi-user.target
 EOF
 ```
 
+The ARM architecture is currently not supported, so we need to tell etcd that we want to use an unsupported architecture.
+This is done by providing the environment variable **ETCD_UNSUPPORTED_ARCH=arm**
+
+
 ### Set The Internal IP Address
 
 The internal IP address will be used by etcd to serve client requests and communicate with other etcd peers.
@@ -97,7 +108,16 @@ The internal IP address will be used by etcd to serve client requests and commun
 Each etcd member must have a unique name within an etcd cluster. Set the etcd name:
 
 ```
-ETCD_NAME=controller$(echo $INTERNAL_IP | cut -c 11)
+ETCD_NAME=$(hostname)
+
+INTERNAL_IP=$(echo "$(ifconfig eth0 | awk '/\<inet addr\>/ { print substr( $2, 6)}')")
+
+```
+Notice that I'm using **eth0** or LAN connection to find the IP Address to replace in the Unit file. If you using Wi-Fi connection, you will probably need to change this to **wlan0**
+The following command will display the interfaces with their IP Addresses:
+
+```
+ip a
 ```
 
 Substitute the etcd name and internal IP address:
@@ -147,9 +167,13 @@ Once all 3 etcd nodes have been bootstrapped verify the etcd cluster is healthy:
 etcdctl --ca-file=/etc/etcd/ca.pem cluster-health
 ```
 
+At first all cluster members were reporting unhealthy for some reason. It took a while (10+ minutes) for them to become healthy.
+In any event, I was able to continue with the installation of Kubernetes just fine.
+
+
 ```
-member 3a57933972cb5131 is healthy: got healthy result from https://10.240.0.12:2379
-member f98dc20bce6225a0 is healthy: got healthy result from https://10.240.0.10:2379
-member ffed16798470cab5 is healthy: got healthy result from https://10.240.0.11:2379
+member 4df25a7f2ac49e88 is healthy: got healthy result from https://10.0.1.94:2379
+member 94230559abaa2df2 is healthy: got healthy result from https://10.0.1.95:2379
+member f6ae1308cea6198a is healthy: got healthy result from https://10.0.1.96:2379
 cluster is healthy
 ```
