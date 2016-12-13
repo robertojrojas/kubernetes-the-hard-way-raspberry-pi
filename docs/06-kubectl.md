@@ -2,18 +2,13 @@
 
 ## Download and Install kubectl
 
-### OS X
-
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/darwin/arm/kubectl
-chmod +x kubectl
-sudo mv kubectl /usr/local/bin
+K8S_VER=v1.4.6
+K8S_ARCH=arm
 ```
 
-### Linux
-
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.4.6/bin/linux/arm/kubectl
+wget https://storage.googleapis.com/kubernetes-release/release/$K8S_VER/bin/linux/$K8S_ARCH/kubectl
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin
 ```
@@ -39,7 +34,7 @@ The following commands will build up the default kubeconfig file used by kubectl
 kubectl config set-cluster kubernetes-the-hard-way \
   --certificate-authority=ca.pem \
   --embed-certs=true \
-  --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443
+  --server=https://10.0.1.94:6443
 ```
 
 ```
@@ -78,5 +73,4 @@ kubectl get nodes
 NAME      STATUS    AGE
 worker0   Ready     7m
 worker1   Ready     5m
-worker2   Ready     2m
 ```
