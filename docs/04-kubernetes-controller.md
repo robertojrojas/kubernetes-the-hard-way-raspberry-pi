@@ -34,6 +34,7 @@ The TLS certificates created in the [Setting up a CA and TLS Cert Generation](02
 Copy the TLS certificates to the Kubernetes configuration directory:
 
 ```
+cd $HOME/kubernetes
 sudo mkdir -p /var/lib/kubernetes
 ```
 
@@ -46,16 +47,21 @@ sudo cp ca.pem kubernetes-key.pem kubernetes.pem /var/lib/kubernetes/
 Download the official Kubernetes release binaries:
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kube-apiserver
+K8S_VER=v1.4.6
+K8S_ARCH=arm
+```
+
+```
+wget https://storage.googleapis.com/kubernetes-release/release/$K8S_VER/bin/linux/$K8S_ARCH/kube-apiserver
 ```
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kube-controller-manager
+wget https://storage.googleapis.com/kubernetes-release/release/$K8S_VER/bin/linux/$K8S_ARCH/kube-controller-manager
 ```
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kube-scheduler
+wget https://storage.googleapis.com/kubernetes-release/release/$K8S_VER/bin/linux/$K8S_ARCH/kube-scheduler
 ```
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kubectl
+wget https://storage.googleapis.com/kubernetes-release/release/$K8S_VER/bin/linux/$K8S_ARCH/kubectl
 ```
 
 Install the Kubernetes binaries:
@@ -84,7 +90,7 @@ The other components, mainly the `scheduler` and `controller manager`, access th
 Download the example token file:
 
 ```
-wget https://raw.githubusercontent.com/kelseyhightower/kubernetes-the-hard-way/master/token.csv
+wget https://raw.githubusercontent.com/robertojrojas/kubernetes-the-hard-way-raspberry-pi/master/token.csv
 ```
 
 Review the example token file and replace the default token.
@@ -106,7 +112,7 @@ Attribute-Based Access Control (ABAC) will be used to authorize access to the Ku
 Download the example authorization policy file:
 
 ```
-wget https://raw.githubusercontent.com/kelseyhightower/kubernetes-the-hard-way/master/authorization-policy.jsonl
+wget https://raw.githubusercontent.com/robertojrojas/kubernetes-the-hard-way-raspberry-pi/master/authorization-policy.jsonl
 ```
 
 Review the example authorization policy file. No changes are required.
@@ -126,7 +132,7 @@ sudo mv authorization-policy.jsonl /var/lib/kubernetes/
 Capture the internal IP address:
 
 ```
-INTERNAL_IP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
+INTERNAL_IP=$(echo "$(ifconfig eth0 | awk '/\<inet addr\>/ { print substr( $2, 6)}')")
 ```
 
 ---
@@ -152,7 +158,7 @@ ExecStart=/usr/bin/kube-apiserver \
   --etcd-cafile=/var/lib/kubernetes/ca.pem \
   --insecure-bind-address=0.0.0.0 \
   --kubelet-certificate-authority=/var/lib/kubernetes/ca.pem \
-  --etcd-servers=https://10.240.0.10:2379,https://10.240.0.11:2379,https://10.240.0.12:2379 \
+  --etcd-servers=https://10.0.1.94:2379,https://10.0.1.95:2379,https://10.0.1.96:2379 \
   --service-account-key-file=/var/lib/kubernetes/kubernetes-key.pem \
   --service-cluster-ip-range=10.32.0.0/24 \
   --service-node-port-range=30000-32767 \
