@@ -4,7 +4,6 @@ In this lab you will bootstrap 3 Kubernetes worker nodes. The following virtual 
 
 * worker0
 * worker1
-* worker2
 
 ## Why
 
@@ -18,9 +17,13 @@ Some people would like to run workers and cluster services anywhere in the clust
 
 ## Provision the Kubernetes Worker Nodes
 
-Run the following commands on `worker0`, `worker1`, `worker2`:
+Run the following commands on `worker0`, and `worker1`:
 
 #### Move the TLS certificates in place
+
+```
+cd $HOME/kubernetes
+```
 
 ```
 sudo mkdir -p /var/lib/kubernetes
@@ -32,52 +35,12 @@ sudo cp ca.pem kubernetes-key.pem kubernetes.pem /var/lib/kubernetes/
 
 #### Docker
 
-Kubernetes should be compatible with the Docker 1.9.x - 1.12.x:
+Installing docker on the Raspberry Pi is so easy, a caveman could do it:
 
 ```
-wget https://get.docker.com/builds/Linux/x86_64/docker-1.12.1.tgz
+  curl -sSL http://get.docker.com  | sh
+  sudo usermod -aG docker pi
 ```
-
-```
-tar -xvf docker-1.12.1.tgz
-```
-
-```
-sudo cp docker/docker* /usr/bin/
-```
-
-Create the Docker systemd unit file:
-
-
-```
-sudo sh -c 'echo "[Unit]
-Description=Docker Application Container Engine
-Documentation=http://docs.docker.io
-
-[Service]
-ExecStart=/usr/bin/docker daemon \
-  --iptables=false \
-  --ip-masq=false \
-  --host=unix:///var/run/docker.sock \
-  --log-level=error \
-  --storage-driver=overlay
-Restart=on-failure
-RestartSec=5
-
-[Install]
-WantedBy=multi-user.target" > /etc/systemd/system/docker.service'
-```
-
-```
-sudo systemctl daemon-reload
-sudo systemctl enable docker
-sudo systemctl start docker
-```
-
-```
-sudo docker version
-```
-
 
 #### kubelet
 
@@ -90,24 +53,29 @@ sudo mkdir -p /opt/cni
 ```
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/network-plugins/cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz
+wget wget https://raw.githubusercontent.com/robertojrojas/kubernetes-the-hard-way-raspberry-pi/master/cni/cni.tar.gz
 ```
 
 ```
-sudo tar -xvf cni-07a8a28637e97b22eb8dfe710eeae1344f69d16e.tar.gz -C /opt/cni
+sudo tar -xvf cni.tar.gz -C /opt/cni
 ```
 
 
 Download and install the Kubernetes worker binaries:
 
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kubectl
+K8S_VER=v1.4.6
+K8S_ARCH=arm
+```
+
+```
+wget https://storage.googleapis.com/kubernetes-release/release/$K8S_VER/bin/linux/$K8S_ARCH/kubectl
 ```
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kube-proxy
+wget https://storage.googleapis.com/kubernetes-release/release/$K8S_VER/bin/linux/$K8S_ARCH/kube-proxy
 ```
 ```
-wget https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kubelet
+wget https://storage.googleapis.com/kubernetes-release/release/$K8S_VER/bin/linux/$K8S_ARCH/kubelet
 ```
 
 ```
@@ -128,7 +96,7 @@ kind: Config
 clusters:
 - cluster:
     certificate-authority: /var/lib/kubernetes/ca.pem
-    server: https://10.240.0.10:6443
+    server: https://10.0.1.94:6443
   name: kubernetes
 contexts:
 - context:
@@ -154,7 +122,7 @@ Requires=docker.service
 [Service]
 ExecStart=/usr/bin/kubelet \
   --allow-privileged=true \
-  --api-servers=https://10.240.0.10:6443,https://10.240.0.11:6443,https://10.240.0.12:6443 \
+  --api-servers=https://10.0.1.94:6443,https://10.0.1.95:6443,https://10.0.1.96:6443 \
   --cloud-provider= \
   --cluster-dns=10.32.0.10 \
   --cluster-domain=cluster.local \
@@ -197,7 +165,7 @@ Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 
 [Service]
 ExecStart=/usr/bin/kube-proxy \
-  --master=https://10.240.0.10:6443 \
+  --master=https://10.0.1.94:6443 \
   --kubeconfig=/var/lib/kubelet/kubeconfig \
   --proxy-mode=iptables \
   --v=2
@@ -219,4 +187,4 @@ sudo systemctl start kube-proxy
 sudo systemctl status kube-proxy --no-pager
 ```
 
-> Remember to run these steps on `worker0`, `worker1`, and `worker2`
+> Remember to run these steps on `worker0`, and `worker1`
