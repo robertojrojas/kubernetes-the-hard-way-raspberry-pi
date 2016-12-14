@@ -5,7 +5,7 @@ This lab walks you through a quick smoke test to make sure things are working.
 ## Test
 
 ```
-kubectl run nginx --image=werwolfby/armhf-alpine-nginx --port=80 --replicas=3
+kubectl run nginx --image=werwolfby/armhf-alpine-nginx --port=80 --replicas=2
 ```
 
 ```
@@ -17,7 +17,6 @@ kubectl get pods -o wide
 ```
 ```
 NAME                     READY     STATUS    RESTARTS   AGE       IP           NODE
-nginx-2032906785-ms8hw   1/1       Running   0          21s       10.200.2.2   worker2
 nginx-2032906785-sokxz   1/1       Running   0          21s       10.200.1.2   worker1
 nginx-2032906785-u8rzc   1/1       Running   0          21s       10.200.0.2   worker0
 ```
@@ -49,7 +48,7 @@ Perform testing from worker raspbery pi
 Test the nginx service using cURL:
 
 ```
-curl http://${NODE_PUBLIC_IP}:${NODE_PORT}
+curl http://${RASPBERRY_IP}:${NODE_PORT}
 ```
 
 ```
