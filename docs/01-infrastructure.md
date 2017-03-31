@@ -11,7 +11,7 @@ I am not responsible for any misconfiguration or damages to the Raspberry Pi equ
 
 # OS Configuration
 
-The OS for each Raspberry Pi is [RASPBIAN JESSIE LITE 2016-09-28](https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2016-09-28/2016-09-23-raspbian-jessie-lite.zip) This is a small image with a nice size OS perfect for small servers.
+The OS for each Raspberry Pi is [RASPBIAN JESSIE LITE 2017-03-02](https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-03-03/2017-03-02-raspbian-jessie-lite.zip) This is a small image with a nice size OS perfect for small servers.
 
 A total of 5 Raspberry Pis will be configured. Here are their names and IP addresses:
 
