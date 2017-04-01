@@ -41,18 +41,18 @@ At the time of this writing etcd for ARM was not supported and no downloads were
 To save you the time and trouble, I'm providing the version I built as part of the repository hosting this tutorial.
 
 ```
-wget https://raw.githubusercontent.com/robertojrojas/kubernetes-the-hard-way-raspberry-pi/master/etcd/etcd-3.1.0-rc.1-arm.tar.gz
+wget https://raw.githubusercontent.com/robertojrojas/kubernetes-the-hard-way-raspberry-pi/master/etcd/etcd-3.1.5-arm.tar.gz
 ```
 
 Extract and install the `etcd` server binary and the `etcdctl` command line client: 
 
 ```
-tar -xvf etcd-3.1.0-rc.1-arm.tar.gz
+tar -xvf etcd-3.1.5-arm.tar.gz
 ```
 
 ```
-sudo mv etcd-3.1.0-rc.1-arm/etcd* /usr/bin/
-rm -rf etcd-3.1.0-rc.1-arm*
+sudo mv etcd-3.1.5-arm/etcd* /usr/bin/
+rm -rf etcd-3.1.5-arm*
 ```
 
 All etcd data is stored under the etcd data directory. In a production cluster the data directory should be backed by a persistent disk. Create the etcd data directory:
