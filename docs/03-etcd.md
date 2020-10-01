@@ -37,7 +37,7 @@ sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
 
 ### Download and Install the etcd binaries
 
-At the time of this writing etcd for ARM was not supported and no downloads were available, so I had to build it from source on a of the Raspberry Pi.
+At the time of this writing etcd for ARM was not supported and no downloads were available, so I had to build it from source on a Raspberry Pi.
 To save you the time and trouble, I'm providing the version I built as part of the repository hosting this tutorial.
 
 ```
@@ -113,7 +113,7 @@ ETCD_NAME=$(hostname)
 INTERNAL_IP=$(echo "$(ifconfig eth0 | awk '/\<inet addr\>/ { print substr( $2, 6)}')")
 
 ```
-Notice that I'm using **eth0** or LAN connection to find the IP Address to replace in the Unit file. If you using Wi-Fi connection, you will probably need to change this to **wlan0**
+Notice that I'm using **eth0** or LAN connection to find the IP Address to replace in the Unit file. If you are using a Wi-Fi connection, you will probably need to change this to **wlan0**
 The following command will display the interfaces with their IP Addresses:
 
 ```

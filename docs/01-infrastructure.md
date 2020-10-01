@@ -66,4 +66,4 @@ EOF
 "
 ```
 
-> Remember to run these steps on `controrller0`, `controrller1`, `controrller2`, `worker0`, and `worker1`
+> Remember to run these steps on `controller0`, `controller1`, `controller2`, `worker0`, and `worker1`
